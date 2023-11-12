@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react';
-
 export default function Home() {
   const [products, setProducts] = useState<{
     id: string; 

@@ -27,15 +27,17 @@ const Products = () => {
   }, [skip, products]);
 
 	return (
-		<div className='px-36 mt-36 mb-36'>
-			{products && products.map((item) => (
+    <div className='px-36 mt-36 mb-36'>
+      {products && products.map((item) => (
         <>
-				<div 
-					className="grid grid-cols-3 gap-5"
-					key={item.id}
-				>
-					<Image 
-						src={item.image_url ?? ''} 
+        <div 
+          className="grid grid-cols-3 gap-5"
+          key={item.id}
+          style={{maxWidth: 310}}
+        >
+          <Image
+            className='rounded'
+            src={item.image_url ?? ''} 
             width={300} 
             height={300} 
             alt={item.name}
@@ -43,7 +45,7 @@ const Products = () => {
             blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
 
           />
-				</div>
+        </div>
         <div>
           <span>{item.name}</span>
           <span>{item.price.toLocaleString('ko-KR')}원</span>
@@ -52,13 +54,13 @@ const Products = () => {
           {item.category_id === 1 && '의류'}
         </span>
         </>
-			))}
+      ))}
 
       <button 
         className='w-full rounded mt-20 bg-zinc-200 p-4'
         onClick={getProducts}
       >더보기</button>
-		</div>
+    </div>
 	);
 };
 
