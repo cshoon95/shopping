@@ -5,8 +5,6 @@ import Image from 'next/image';
 import { Input, Pagination, SegmentedControl, Select } from '@mantine/core';
 import { FILTERS, TAKE, CATEGORY_MAP } from '@/constants/products';
 
-import { IconSearch } from '@tabler/icons'
-
 const Products = () => {
   const [activePage, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -14,6 +12,8 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('-1');
 	const [products, setProducts] = useState<products[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(FILTERS[0].value)
+  const [keyword, setKeyword] = useState('');
+
 
 	useEffect(() => {
     fetch(`/api/get-categories`)
@@ -22,23 +22,28 @@ const Products = () => {
   }, []);
   
   useEffect(() => {
-    fetch(`/api/get-products-count?category=${selectedCategory}`)
+    fetch(`/api/get-products-count?category=${selectedCategory}&contains=${keyword}`)
 			.then((res) => res.json())
 			.then((data) => setTotal(Math.ceil(data.items / TAKE)));
-	}, [selectedCategory]);
+	}, [selectedCategory, keyword]);
 
   useEffect(() => {
     const skip = TAKE * (activePage - 1);
 
-    fetch(`/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}`)
+    fetch(`/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${keyword}`)
 			.then((res) => res.json())
 			.then((data) => setProducts(data.items))
-	}, [activePage, selectedCategory, selectedFilter]);
+	}, [activePage, selectedCategory, selectedFilter, keyword]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+  }
 
 	return (
 		<div className='px-36 mt-36 mb-36'>
       <div className='mb-4'>
-        <Input icon={<IconSearch />} placeholder='Your email'></Input>
+        <Input placeholder='Your email' value={keyword} onChange={handleChange}></Input>
+        
       </div>
       <div className='mb-4'>
         <Select value={selectedFilter} onChange={setSelectedFilter} data={FILTERS}></Select>
@@ -73,7 +78,6 @@ const Products = () => {
             alt={item.name}
             placeholder='blur'
             blurDataURL='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='
-
           />
 				</div>
         <div>
