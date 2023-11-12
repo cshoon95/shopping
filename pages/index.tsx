@@ -5,6 +5,7 @@ export default function Home() {
   const [products, setProducts] = useState<{
     id: string; 
     name: string;
+    createdAt: string;
   }[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,7 +39,7 @@ export default function Home() {
         <div>
           <p>Product List</p>
           {products && products.map((item)=>(
-            <div key={item.id}>{item.name}</div>
+            <div key={item.id}>{item.name}<span>{item.createdAt}</span></div>
           ))}
         </div>
     </main>

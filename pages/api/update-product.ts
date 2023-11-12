@@ -3,11 +3,15 @@ import { PrismaClient } from '@prisma'
 
 const prisma = new PrismaClient();
 
-async function getProducts(skip: number, take: number) {
+async function updateProduct(id: number, contents: string) {
 	try {
-		const response = await prisma.products.findMany({
-			skip: skip,
-			take: take
+		const response = await prisma.products.update({
+			where: {
+				id: id,
+			},
+			data: {
+				contents: contents
+			}
 		});
 		console.log(response);
 		return response;
@@ -25,14 +29,15 @@ export default async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
-	const { skip, take } = req.query
+	const { id, contents } = JSON.parse(req.body);
 
-	if (skip == null || take == null) {
-		res.status(400).json({ message: 'no skip or take'})
+	if (id === null || contents === null) {
+		res.status(400).json({message: 'no id or contents'})
+		return;
 	}
 
 	try {
-		const products = await getProducts(Number(skip), Number(take));
+		const products = await updateProduct(Number(id), contents);
 		res.status(200).json({items: products, message: `Success`});
 	} catch (error) {
 		res.status(400).json({message: `Faild`});

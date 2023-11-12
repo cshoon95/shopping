@@ -1,5 +1,16 @@
 Next.js
-Notion
+Yarn Berry
+
+Planet Scale -> 서버리스 DB 
+Prisma -> Typescript 기반 ORM(MySql)
+	- @prisma/client 통해 prisma/schema.prisma에서 테이블 정보 가져옴.
+
+
+library
+Editor: draft.js react-draft-wysiwyg
+Emotion: css를 자바스크립트로 쓸 수 있게 만들어줌
+rfc
+
 
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
