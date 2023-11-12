@@ -4,44 +4,57 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import { Input, Pagination, SegmentedControl, Select } from '@mantine/core';
 import { FILTERS, TAKE, CATEGORY_MAP } from '@/constants/products';
+import useDebounce from '../../hooks/useDebounce';
+import { useQuery } from '@tanstack/react-query';
 
 const Products = () => {
   const [activePage, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [categories, setCategories] = useState<categories[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('-1');
-	const [products, setProducts] = useState<products[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<string | null>(FILTERS[0].value)
   const [keyword, setKeyword] = useState('');
 
+  const debouncedKeyword = useDebounce<string>(keyword);
 
-	useEffect(() => {
-    fetch(`/api/get-categories`)
-      .then((res) => res.json())
-      .then((data) => setCategories(data.items))
-  }, []);
+  // const { data } = useQuery<{ items: products[] }>(
+  //   [`/api/get-products?skip=${TAKE * (activePage - 1)}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${keyword}`],
+  //   () => fetch(`/api/get-products?skip=${TAKE * (activePage - 1)}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${keyword}`)
+  //     .then((res) => {
+  //       if (!res.ok) {
+  //         throw new Error(`Network response was not ok: ${res.status}`);
+  //       }
+  //       return res.json();
+  //     }),
+  // )
+
+  // const { data: categories } = useQuery<{ items: { id: number; name: string }[] }, unknown, { id: number; name: string }[]>(
+  //   ['/api/get-categories'],
+  //   () => fetch(`/api/get-categories`).then((res) => res.json())
+  // );
+  
+
+	// useEffect(() => {
+  //   fetch(`/api/get-categories`)
+  //     .then((res) => res.json())
+  //     .then((data) => setAllCategories(data.items))
+  // }, []);
   
   useEffect(() => {
-    fetch(`/api/get-products-count?category=${selectedCategory}&contains=${keyword}`)
-			.then((res) => res.json())
-			.then((data) => setTotal(Math.ceil(data.items / TAKE)));
-	}, [selectedCategory, keyword]);
+    fetch(`/api/get-products-count?category=${selectedCategory}&contains=${debouncedKeyword}`)
+      .then((res) => res.json())
+      .then((data) => setTotal(Math.ceil(data.items / TAKE)));
+  }, [selectedCategory, debouncedKeyword]);
 
-  useEffect(() => {
-    const skip = TAKE * (activePage - 1);
-
-    fetch(`/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${keyword}`)
-			.then((res) => res.json())
-			.then((data) => setProducts(data.items))
-	}, [activePage, selectedCategory, selectedFilter, keyword]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
   }
 
 	return (
+    
 		<div className='px-36 mt-36 mb-36'>
-      <div className='mb-4'>
+      <div class="mb-4">
         <Input placeholder='Your email' value={keyword} onChange={handleChange}></Input>
         
       </div>

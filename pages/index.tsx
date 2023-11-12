@@ -33,7 +33,7 @@ export default function Home() {
         </p>
 
         <input ref={inputRef} type="text" placeholder='name'/>
-        <button onClick={handleClick}>add Clothes</button>
+        <button class="mb-4" onClick={handleClick}>add Clothes</button>
     
         <div>
           <p>Product List</p>
